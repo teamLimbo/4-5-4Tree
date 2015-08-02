@@ -106,7 +106,7 @@ void BpTree::printValues(){
 void BpTree::splitNode(treeNode *node){
     
     treeNode* newNode = new treeNode(keys_per_node, node, true);
-
+    
     //Splitling up a leaf
     
     if (node->isLeaf == true){
@@ -130,6 +130,13 @@ void BpTree::splitNode(treeNode *node){
         //The orginal node keeps the first i values intact but the counter
         //(place where new value is inserted) moves.
         node->counter = i;
+        
+        if (node->parent == NULL){
+        
+            //This happens when a new root is created
+            treeNode* newRoot = new treeNode(keys_per_node, NULL, false);
+            node->parent = newRoot;
+        }
         
         //Linking up the pointers
         node->pointers[i] = newNode;
@@ -176,6 +183,14 @@ void BpTree::splitNode(treeNode *node){
         
         newNode->counter = keyIndex-1;
         node->counter = keyIndex;
+        
+        if (node->parent == NULL){
+            
+            //This happens when a new root is created
+            treeNode* newRoot = new treeNode(keys_per_node, NULL, false);
+            node->parent = newRoot;
+        }
+        
         newNode->parent = node->parent;
         node->parent->pointers[node->parent->counter]=newNode;
 
@@ -192,6 +207,8 @@ void BpTree::splitNode(treeNode *node){
         */
     
     }
+    
+    //Need to add a split case when the new root is created.
 
     
     
