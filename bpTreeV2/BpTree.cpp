@@ -71,9 +71,9 @@ void BpTree::insert(int n, string s){
         records->dataBaseInsert(n, s, records);
     }
     
-    sort(root->keys,root->keys+root->counter); //This fucntion sorts the node upto inserted elements everytime when the new value is inserted
+    sort(root->keys,root->keys+root->counter); //This fucntion sorts the node upto inserted elements everytime before a new value is inserted
     
-    //Insertion when the leaf node is full=====================================
+    //Insertion when the leaf node is full=================================
     if ((root->isFull(root) == true)){
 
         splitNode(root);
@@ -105,21 +105,22 @@ void BpTree::printValues(){
 
 void BpTree::splitNode(treeNode *node){
     
+    treeNode* newNode = new treeNode(keys_per_node, node, true);
+
     //Splitling up a leaf
     
     if (node->isLeaf == true){
-    
-        treeNode* newNode = new treeNode(keys_per_node, node, true);
-    
+        
         int i;
+        
         if (keys_per_node%2 == 0){
             i = keys_per_node/2;
         }
         else{
-            i = keys_per_node/2+1;
+            i = keys_per_node/2 + 1;
         }
     
-        //Put the split values in the new node.
+        //Distributing the split values in the new node.
         for (int y = i; y <= keys_per_node; y++) {
             newNode->keys[y-i] = node->keys[y];
         }
@@ -143,7 +144,52 @@ void BpTree::splitNode(treeNode *node){
    // Splitting up an interior node (non-leaf)
     
     if(node->isLeaf == false){
-    
+        
+        int pointerIndex;
+        
+        if ((keys_per_node+2)%2 == 0){
+            pointerIndex = (keys_per_node+2)/2;
+        }
+        else{
+            pointerIndex = (keys_per_node+2)/2 + 1;
+        }
+        
+        int keyIndex;
+        
+        if ((keys_per_node)%2 == 0){
+            keyIndex = (keys_per_node)/2;
+        }
+        else{
+            keyIndex = (keys_per_node)/2 + 1;
+        }
+        
+        //Distributing the split values in the new node
+        for (int m = keyIndex; m <= keys_per_node; m++) {
+            newNode->keys[m-keyIndex] = node->keys[m];
+        }
+        
+        //Distributing the split pointers in the new node
+        for (int j = pointerIndex; j <= keys_per_node ; j++) {
+            newNode->pointers[j-pointerIndex] = node->pointers[j];
+        }
+       
+        
+        newNode->counter = keyIndex-1;
+        node->counter = keyIndex;
+        newNode->parent = node->parent;
+        node->parent->pointers[node->parent->counter]=newNode;
+
+        
+        //TODO:
+        //May have to free up the shifted pointers from orignal node
+        
+        /*
+         The new key's value falls between the values in the orignal
+         node and the new node. The left over key is inserted into the 
+         parent of the node along with a pointer to the new interior 
+         node.
+         This will be taken care of in insert function
+        */
     
     }
 
