@@ -77,6 +77,24 @@ void BpTree::insert(int n, string s){
     if ((root->isFull(root) == true)){
 
         splitNode(root);
+        if(root->parent->keys[root->parent->counter - 1] < n){
+            
+            //This is the new node thats created during the split
+            root->parent->pointers[root->parent->counter]->keys[root->parent->pointers[root->parent->counter]->counter] = n;
+            root->parent->pointers[root->parent->counter]->counter++;
+            records->dataBaseInsert(n, s, records);
+
+        }
+        else if (root->parent->keys[root->parent->counter - 1] == n){
+            
+            cout<<"Duplicate Key"<<endl;
+        }else{
+        
+            root->keys[root->counter]=n;
+            root->counter++;
+            records->dataBaseInsert(n, s, records);
+        }
+        
     
     }
 
@@ -94,7 +112,28 @@ void BpTree::find(int n){
     }
 }
 
-void BpTree::printKeys(){}
+void BpTree::printKeys(){
+    
+    treeNode* dynamicRoot = new treeNode(keys_per_node, NULL, true);
+    dynamicRoot = root;
+    
+    
+    if (root->parent != NULL){
+        
+        while (dynamicRoot->parent != NULL){
+            dynamicRoot = dynamicRoot->parent;
+        }
+    }
+    
+    treeNode* currentLevel = new treeNode(keys_per_node, NULL, false);
+    currentLevel= dynamicRoot;
+    
+    for (int i=0; i < currentLevel->counter; i++){
+        cout<<currentLevel->keys[i]<<", ";
+    }
+    
+
+}
 
 void BpTree::printValues(){
     
@@ -105,12 +144,14 @@ void BpTree::printValues(){
 
 void BpTree::splitNode(treeNode *node){
     
-    treeNode* newNode = new treeNode(keys_per_node, node, true);
     
     //Splitling up a leaf
+    treeNode* newNode = new treeNode(keys_per_node, node, true);
+
     
     if (node->isLeaf == true){
         
+
         int i;
         
         if (keys_per_node%2 == 0){
@@ -151,6 +192,8 @@ void BpTree::splitNode(treeNode *node){
    // Splitting up an interior node (non-leaf)
     
     if(node->isLeaf == false){
+        
+        newNode->isLeaf = false;
         
         int pointerIndex;
         
@@ -207,10 +250,7 @@ void BpTree::splitNode(treeNode *node){
         */
     
     }
-    
-    //Need to add a split case when the new root is created.
-
-    
+        
     
 }
 

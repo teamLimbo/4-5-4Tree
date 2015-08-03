@@ -17,15 +17,20 @@ int main(){
     tree->insert(5, "Maria");
     tree->insert(21, "Archit");
     
-    cout<<tree->root->keys[0]<<endl;
-    cout<<tree->root->keys[1]<<endl;
-    cout<<tree->root->keys[2]<<endl;
-    cout<<tree->root->keys[3]<<endl;
+//    cout<<tree->root->keys[0]<<endl;
+//    cout<<tree->root->keys[1]<<endl;
+//    
+//    cout<<tree->root->parent->keys[0]<<endl;
+//    cout<<tree->root->parent->pointers[tree->root->parent->counter]->keys[0]<<endl;
+//    cout<<tree->root->parent->pointers[tree->root->parent->counter]->keys[1]<<endl;
+    
+    tree->printKeys();
+
 
    
-    tree->printValues();
-    cout<<"\n";
-    tree->find(5);
+//    tree->printValues();
+//    cout<<"\n";
+//    tree->find(5);
 
 //    cout<<tree->records->lastKey;
 
