@@ -62,6 +62,10 @@ BpTree::BpTree(int n){
 
 void BpTree::insert(int n, string s){
     
+//    if (root->counter >= keys_per_node){
+//        root->counter = 0;
+//    }
+    
     //Simple insertion into a leaf thats not full=========================
     
     if ((root->isFull(root) == false) && (root->isLeaf == true)){
@@ -69,14 +73,16 @@ void BpTree::insert(int n, string s){
         root->keys[root->counter] = n;
         root->counter++;
         records->dataBaseInsert(n, s, records);
+        sort(root->keys,root->keys+root->counter); //This fucntion sorts the node upto inserted elements everytime before a new value is inserted
+
     }
     
-    sort(root->keys,root->keys+root->counter); //This fucntion sorts the node upto inserted elements everytime before a new value is inserted
     
     //Insertion when the leaf node is full=================================
     if ((root->isFull(root) == true)){
 
         splitNode(root);
+        
         if(root->parent->keys[root->parent->counter - 1] < n){
             
             //This is the new node thats created during the split
@@ -88,6 +94,7 @@ void BpTree::insert(int n, string s){
         else if (root->parent->keys[root->parent->counter - 1] == n){
             
             cout<<"Duplicate Key"<<endl;
+            
         }else{
         
             root->keys[root->counter]=n;
@@ -126,7 +133,7 @@ void BpTree::printKeys(){
     }
     
     treeNode* currentLevel = new treeNode(keys_per_node, NULL, false);
-    currentLevel= dynamicRoot;
+    currentLevel = dynamicRoot;
     
     for (int i=0; i < currentLevel->counter; i++){
         cout<<currentLevel->keys[i]<<", ";
@@ -162,7 +169,7 @@ void BpTree::splitNode(treeNode *node){
         }
     
         //Distributing the split values in the new node.
-        for (int y = i; y <= keys_per_node; y++) {
+        for (int y = i; y < keys_per_node; y++) {
             newNode->keys[y-i] = node->keys[y];
         }
     
@@ -180,12 +187,13 @@ void BpTree::splitNode(treeNode *node){
         }
         
         //Linking up the pointers
-        node->pointers[i] = newNode;
-        node->parent->pointers[node->parent->counter]=newNode;
+        node->pointers[keys_per_node] = newNode;
+        node->parent->pointers[node->parent->counter+1]=newNode;
         newNode->parent = node->parent;
         
         //update the values in parent node
-        node->parent->keys[node->parent->counter - 1] = newNode->keys[0];
+        node->parent->keys[node->parent->counter] = newNode->keys[0];
+        node->parent->counter++;
 
     }
     
@@ -214,12 +222,12 @@ void BpTree::splitNode(treeNode *node){
         }
         
         //Distributing the split values in the new node
-        for (int m = keyIndex; m <= keys_per_node; m++) {
+        for (int m = keyIndex; m < keys_per_node; m++) {
             newNode->keys[m-keyIndex] = node->keys[m];
         }
         
         //Distributing the split pointers in the new node
-        for (int j = pointerIndex; j <= keys_per_node ; j++) {
+        for (int j = pointerIndex; j < keys_per_node ; j++) {
             newNode->pointers[j-pointerIndex] = node->pointers[j];
         }
        
