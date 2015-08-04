@@ -32,7 +32,7 @@ void treeNode::makeLeaf(treeNode* treeNode_){
 
 bool treeNode::isFull(treeNode* treeNode_){
     
-    if ((treeNode_->numKeys) < (treeNode_->counter)){
+    if ((treeNode_->numKeys) <= (treeNode_->counter)){
         return true;
     }
     
@@ -68,45 +68,70 @@ void BpTree::insert(int n, string s){
     
     //Simple insertion into a leaf thats not full=========================
     
-    if ((root->isFull(root) == false) && (root->isLeaf == true)){
+    if ((dynamicRoot->isFull(dynamicRoot) == false) && (dynamicRoot->isLeaf == true)){
         
-        root->keys[root->counter] = n;
-        root->counter++;
+        dynamicRoot->keys[dynamicRoot->counter] = n;
+        dynamicRoot->counter++;
         records->dataBaseInsert(n, s, records);
-        sort(root->keys,root->keys+root->counter); //This fucntion sorts the node upto inserted elements everytime before a new value is inserted
+        sort(dynamicRoot->keys,dynamicRoot->keys+dynamicRoot->counter); //This fucntion sorts the node upto inserted elements everytime before a new value is inserted
 
     }
     
     
     //Insertion when the leaf node is full=================================
-    if ((root->isFull(root) == true)){
+    else if ((dynamicRoot->isFull(dynamicRoot) == true) && (dynamicRoot->isLeaf == true)){
 
-        splitNode(root);
+        splitNode(dynamicRoot);
         
-        if(root->parent->keys[root->parent->counter - 1] < n){
+        if(dynamicRoot->parent->keys[dynamicRoot->parent->counter - 1] < n){
             
             //This is the new node thats created during the split
-            root->parent->pointers[root->parent->counter]->keys[root->parent->pointers[root->parent->counter]->counter] = n;
-            root->parent->pointers[root->parent->counter]->counter++;
+            dynamicRoot->parent->pointers[dynamicRoot->parent->counter]->keys[dynamicRoot->parent->pointers[dynamicRoot->parent->counter]->counter] = n;
+            dynamicRoot->parent->pointers[dynamicRoot->parent->counter]->counter++;
             records->dataBaseInsert(n, s, records);
 
         }
-        else if (root->parent->keys[root->parent->counter - 1] == n){
+        else if (dynamicRoot->parent->keys[dynamicRoot->parent->counter - 1] == n){
             
             cout<<"Duplicate Key"<<endl;
             
         }else{
         
-            root->keys[root->counter]=n;
-            root->counter++;
+            dynamicRoot->keys[root->counter]=n;
+            dynamicRoot->counter++;
             records->dataBaseInsert(n, s, records);
         }
-        
-        if (){
-        
-        
+
+    }
+    
+    if (dynamicRoot->isLeaf == false){
+    
+        for (int i=0; i < dynamicRoot->counter; i++){
+            if (n < dynamicRoot->keys[i]){
+                if(dynamicRoot->pointers[i]->isFull(dynamicRoot->pointers[i]) == false && dynamicRoot->pointers[i]->isLeaf == true){
+                    dynamicRoot->pointers[i]->keys[dynamicRoot->pointers[i]->counter] = n;
+                    dynamicRoot->pointers[i]->counter++;
+                    sort(dynamicRoot->pointers[i]->keys,dynamicRoot->pointers[i]->keys+dynamicRoot->pointers[i]->counter);
+                }
+                
+                if (dynamicRoot->pointers[i]->isLeaf == false){
+                    
+                    treeNode* currentNode = new treeNode(keys_per_node, NULL, false);
+                    currentNode = dynamicRoot->pointers[i];
+                    
+                }
+            }
+            
+            if (n > dynamicRoot->keys[i]){
+                
+                if(dynamicRoot->pointers[i+1]->isFull(dynamicRoot->pointers[i+1]) == false && dynamicRoot->pointers[i+1]->isLeaf == true){
+                    dynamicRoot->pointers[i+1]->keys[dynamicRoot->pointers[i+1]->counter] = n;
+                    dynamicRoot->pointers[i+1]->counter++;
+                    sort(dynamicRoot->pointers[i+1]->keys,dynamicRoot->pointers[i+1]->keys+dynamicRoot->pointers[i+1]->counter);
+                }
+
+            }
         }
-        
     
     }
 
@@ -207,6 +232,7 @@ void BpTree::splitNode(treeNode *node){
         //update the values in parent node
         node->parent->keys[node->parent->counter] = newNode->keys[0];
         node->parent->counter++;
+        
 
     }
     
@@ -259,7 +285,6 @@ void BpTree::splitNode(treeNode *node){
         node->parent->pointers[node->parent->counter] = node;
         node->parent->pointers[node->parent->counter+1]=newNode;
 
-        
         //TODO:
         //May have to free up the shifted pointers from orignal node
         
@@ -290,6 +315,14 @@ treeNode*  BpTree::findRoot(treeNode* node){
     
     return dynamicRoot;
     
+}
+
+treeNode* BpTree::findLeaf(treeNode *node){
+    
+    treeNode* dynamicLeaf = new treeNode(keys_per_node, NULL, true);
+
+
+    return dynamicLeaf;
 }
 
 
