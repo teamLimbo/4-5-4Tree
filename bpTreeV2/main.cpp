@@ -19,8 +19,8 @@ int main(){
     tree->insert(21, "Chandler");
     tree->insert(4, "Joey");
     tree->insert(27, "Phoebe");
-    tree->insert(50, "Iron-Man");
-    tree->insert(6, "Hulk");
+//    tree->insert(50, "Iron-Man");
+   // tree->insert(6, "Hulk");
     
 //    cout<<tree->root->keys[0]<<endl;
 //    cout<<tree->root->keys[1]<<endl;

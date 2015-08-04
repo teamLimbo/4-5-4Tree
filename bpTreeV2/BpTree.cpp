@@ -105,33 +105,39 @@ void BpTree::insert(int n, string s){
     }
     
     if (dynamicRoot->isLeaf == false){
-    
-        for (int i=0; i < dynamicRoot->counter; i++){
-            if (n < dynamicRoot->keys[i]){
-                if(dynamicRoot->pointers[i]->isFull(dynamicRoot->pointers[i]) == false && dynamicRoot->pointers[i]->isLeaf == true){
-                    dynamicRoot->pointers[i]->keys[dynamicRoot->pointers[i]->counter] = n;
-                    dynamicRoot->pointers[i]->counter++;
-                    sort(dynamicRoot->pointers[i]->keys,dynamicRoot->pointers[i]->keys+dynamicRoot->pointers[i]->counter);
-                }
-                
-                if (dynamicRoot->pointers[i]->isLeaf == false){
-                    
-                    treeNode* currentNode = new treeNode(keys_per_node, NULL, false);
-                    currentNode = dynamicRoot->pointers[i];
-                    
-                }
-            }
-            
-            if (n > dynamicRoot->keys[i]){
-                
-                if(dynamicRoot->pointers[i+1]->isFull(dynamicRoot->pointers[i+1]) == false && dynamicRoot->pointers[i+1]->isLeaf == true){
-                    dynamicRoot->pointers[i+1]->keys[dynamicRoot->pointers[i+1]->counter] = n;
-                    dynamicRoot->pointers[i+1]->counter++;
-                    sort(dynamicRoot->pointers[i+1]->keys,dynamicRoot->pointers[i+1]->keys+dynamicRoot->pointers[i+1]->counter);
-                }
-
-            }
-        }
+        
+        treeNode* leafNode = new treeNode(keys_per_node, NULL, true);
+        leafNode = findLeaf(dynamicRoot, n);
+        leafNode->keys[leafNode->counter] =n;
+        leafNode->counter++;
+        sort(leafNode->keys,leafNode->keys+leafNode->counter);
+        
+//        for (int i=0; i < dynamicRoot->counter; i++){
+//            if (n < dynamicRoot->keys[i]){
+//                if(dynamicRoot->pointers[i]->isFull(dynamicRoot->pointers[i]) == false && dynamicRoot->pointers[i]->isLeaf == true){
+//                    dynamicRoot->pointers[i]->keys[dynamicRoot->pointers[i]->counter] = n;
+//                    dynamicRoot->pointers[i]->counter++;
+//                    sort(dynamicRoot->pointers[i]->keys,dynamicRoot->pointers[i]->keys+dynamicRoot->pointers[i]->counter);
+//                }
+//                
+//                if (dynamicRoot->pointers[i]->isLeaf == false){
+//                    
+//                    treeNode* currentNode = new treeNode(keys_per_node, NULL, false);
+//                    currentNode = dynamicRoot->pointers[i];
+//                    
+//                }
+//            }
+//            
+//            if (n > dynamicRoot->keys[i]){
+//                
+//                if(dynamicRoot->pointers[i+1]->isFull(dynamicRoot->pointers[i+1]) == false && dynamicRoot->pointers[i+1]->isLeaf == true){
+//                    dynamicRoot->pointers[i+1]->keys[dynamicRoot->pointers[i+1]->counter] = n;
+//                    dynamicRoot->pointers[i+1]->counter++;
+//                    sort(dynamicRoot->pointers[i+1]->keys,dynamicRoot->pointers[i+1]->keys+dynamicRoot->pointers[i+1]->counter);
+//                }
+//
+//            }
+//        }
     
     }
 
@@ -173,6 +179,11 @@ void BpTree::printKeys(){
         cout<<currentLevel->pointers[1]->keys[i]<<", ";
     }
     
+    cout<<"   ";
+    
+    for (int i=0; i < currentLevel->pointers[2]->counter; i++){
+        cout<<currentLevel->pointers[2]->keys[i]<<", ";
+    }
     
 
 
@@ -191,8 +202,9 @@ void BpTree::printValues(){
 void BpTree::splitNode(treeNode *node){
     
     
-    //Splitling up a leaf
     treeNode* newNode = new treeNode(keys_per_node, NULL, true);
+    
+    //Splitling up a leaf
 
     if (node->isLeaf == true){
 
@@ -317,12 +329,77 @@ treeNode*  BpTree::findRoot(treeNode* node){
     
 }
 
-treeNode* BpTree::findLeaf(treeNode *node){
+treeNode* BpTree::findLeaf(treeNode *node, int n){
     
-    treeNode* dynamicLeaf = new treeNode(keys_per_node, NULL, true);
+    
+    if (node->isLeaf == true && node->isFull(node) == false){
+        return node;
+    }
+    
+    else if (node->isLeaf == true && node->isFull(node) == true){
+        splitNode(node);
+        for (int i=0; i < node->parent->counter; i++){
+            if (n < node->parent->keys[i]){
+                return node->parent->pointers[i];
+            }
+            
+            else if(n > node->parent->keys[i]){
+                return node->parent->pointers[i+1];
+            }
+        }
+        
+    }
+    
+    else if (node->isLeaf == false) {
+        for (int i=0; i < node->counter; i++){
+            if (n < node->keys[i]){
+                if(node->pointers[i]->isFull(node->pointers[i]) == false && node->pointers[i]->isLeaf == true){
+                    return node->pointers[i];
+                }
+                
+                else if (node->pointers[i]->isFull(node->pointers[i]) == true && node->pointers[i]->isLeaf == true){
+                    splitNode(node->pointers[i]);
+                    for (int i=0; i < node->pointers[i]->parent->counter; i++){
+                        if (n < node->pointers[i]->parent->keys[i]){
+                            return node->pointers[i]->parent->pointers[i];
+                        }
+                        
+                        else if(n > node->pointers[i]->parent->keys[i]){
+                            return node->pointers[i]->parent->pointers[i];
+                        }
+                    }
+                }
+                
+                else if(node->pointers[i]->isLeaf == false){
+                    findLeaf(node->pointers[i], n);
+                }
+            }
+            
+            else if (n > node->keys[i]){
+                if(node->pointers[i+1]->isFull(node->pointers[i+1]) == false && node->pointers[i+1]->isLeaf == true){
+                    return node->pointers[i+1];
+                }
+                else if (node->pointers[i+1]->isFull(node->pointers[i+1]) == true && node->pointers[i+1]->isLeaf == true){
+                    splitNode(node->pointers[i+1]);
+                    for (int i=0; i < node->pointers[i+1]->parent->counter; i++){
+                        if (n < node->pointers[i+1]->parent->keys[i]){
+                            return node->pointers[i+1]->parent->pointers[i];
+                        }
+                        
+                        else if(n > node->pointers[i+1]->parent->keys[i]){
+                            return node->pointers[i+1]->parent->pointers[i+1];
+                        }
+                    }
+                }
+                
+                else if(node->pointers[i+1]->isLeaf == false){
+                    findLeaf(node->pointers[i+1], n);
+                }
+            }
+        }
+    }
 
-
-    return dynamicLeaf;
+    return node;
 }
 
 
