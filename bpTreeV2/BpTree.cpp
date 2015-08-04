@@ -32,7 +32,7 @@ void treeNode::makeLeaf(treeNode* treeNode_){
 
 bool treeNode::isFull(treeNode* treeNode_){
     
-    if ((treeNode_->numKeys) <= (treeNode_->counter)){
+    if ((treeNode_->numKeys) < (treeNode_->counter)){
         return true;
     }
     
@@ -62,9 +62,9 @@ BpTree::BpTree(int n){
 
 void BpTree::insert(int n, string s){
     
-//    if (root->counter >= keys_per_node){
-//        root->counter = 0;
-//    }
+    treeNode* dynamicRoot = new treeNode(keys_per_node, NULL, true);
+    dynamicRoot = findRoot(root);
+
     
     //Simple insertion into a leaf thats not full=========================
     
@@ -102,6 +102,11 @@ void BpTree::insert(int n, string s){
             records->dataBaseInsert(n, s, records);
         }
         
+        if (){
+        
+        
+        }
+        
     
     }
 
@@ -122,15 +127,8 @@ void BpTree::find(int n){
 void BpTree::printKeys(){
     
     treeNode* dynamicRoot = new treeNode(keys_per_node, NULL, true);
-    dynamicRoot = root;
     
-    
-    if (root->parent != NULL){
-        
-        while (dynamicRoot->parent != NULL){
-            dynamicRoot = dynamicRoot->parent;
-        }
-    }
+    dynamicRoot = findRoot(root);
     
     treeNode* currentLevel = new treeNode(keys_per_node, NULL, false);
     currentLevel = dynamicRoot;
@@ -138,6 +136,22 @@ void BpTree::printKeys(){
     for (int i=0; i < currentLevel->counter; i++){
         cout<<currentLevel->keys[i]<<", ";
     }
+    cout<<endl;
+    
+
+    for (int i=0; i < currentLevel->pointers[0]->counter; i++){
+        cout<<currentLevel->pointers[0]->keys[i]<<", ";
+    }
+    cout<<"   ";
+    
+    for (int i=0; i < currentLevel->pointers[1]->counter; i++){
+        cout<<currentLevel->pointers[1]->keys[i]<<", ";
+    }
+    
+    
+
+
+        
     
 
 }
@@ -153,11 +167,9 @@ void BpTree::splitNode(treeNode *node){
     
     
     //Splitling up a leaf
-    treeNode* newNode = new treeNode(keys_per_node, node, true);
+    treeNode* newNode = new treeNode(keys_per_node, NULL, true);
 
-    
     if (node->isLeaf == true){
-        
 
         int i;
         
@@ -173,14 +185,14 @@ void BpTree::splitNode(treeNode *node){
             newNode->keys[y-i] = node->keys[y];
         }
     
-        newNode->counter = i-1;             //Keep track of the new insertion point for the new node
+        newNode->counter = i-1;     //Keep track of the new insertion point for the new node
 
         //The orginal node keeps the first i values intact but the counter
         //(place where new value is inserted) moves.
         node->counter = i;
         
         if (node->parent == NULL){
-        
+
             //This happens when a new root is created
             treeNode* newRoot = new treeNode(keys_per_node, NULL, false);
             node->parent = newRoot;
@@ -188,6 +200,7 @@ void BpTree::splitNode(treeNode *node){
         
         //Linking up the pointers
         node->pointers[keys_per_node] = newNode;
+        node->parent->pointers[node->parent->counter] = node;
         node->parent->pointers[node->parent->counter+1]=newNode;
         newNode->parent = node->parent;
         
@@ -205,11 +218,11 @@ void BpTree::splitNode(treeNode *node){
         
         int pointerIndex;
         
-        if ((keys_per_node+2)%2 == 0){
-            pointerIndex = (keys_per_node+2)/2;
+        if ((keys_per_node+1)%2 == 0){
+            pointerIndex = (keys_per_node+1)/2;
         }
         else{
-            pointerIndex = (keys_per_node+2)/2 + 1;
+            pointerIndex = (keys_per_node+1)/2 + 1;
         }
         
         int keyIndex;
@@ -243,7 +256,8 @@ void BpTree::splitNode(treeNode *node){
         }
         
         newNode->parent = node->parent;
-        node->parent->pointers[node->parent->counter]=newNode;
+        node->parent->pointers[node->parent->counter] = node;
+        node->parent->pointers[node->parent->counter+1]=newNode;
 
         
         //TODO:
@@ -258,7 +272,23 @@ void BpTree::splitNode(treeNode *node){
         */
     
     }
+    
+    
+}
+
+treeNode*  BpTree::findRoot(treeNode* node){
+    
+    treeNode* dynamicRoot = new treeNode(keys_per_node, NULL, true);
+    dynamicRoot = node;
+    
+    if (node->parent != NULL){
         
+        while (dynamicRoot->parent != NULL){
+            dynamicRoot = dynamicRoot->parent;
+        }
+    }
+    
+    return dynamicRoot;
     
 }
 

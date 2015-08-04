@@ -64,6 +64,7 @@ public:
     
     //Helper fuctions
     void splitNode(treeNode* node);
+    treeNode* findRoot(treeNode* node);
     
     
     //Class variables
