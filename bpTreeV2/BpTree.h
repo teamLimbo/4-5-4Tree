@@ -66,7 +66,7 @@ public:
     void splitNode(treeNode* node);
     treeNode* findRoot(treeNode* node);
     treeNode* findLeaf(treeNode* node, int n);
-    
+    void traversePrintKeys(treeNode* node);
     
     //Class variables
 	treeNode* root;
