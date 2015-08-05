@@ -21,7 +21,7 @@ int main(){
     tree->insert(27, "Phoebe");
     tree->insert(50, "Iron-Man");
     tree->insert(6, "Hulk");
-    tree->insert(22, "Captain America");
+//    tree->insert(22, "Captain America");
     
 //    cout<<tree->root->parent->counter<<endl;
 //    cout<<tree->root->counter<<endl;
@@ -49,7 +49,7 @@ int main(){
    
 //    tree->printValues();
 //    cout<<"\n";
-    tree->find(22);
+//    tree->find(22);
 
 //    cout<<tree->records->lastKey;
 
