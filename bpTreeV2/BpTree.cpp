@@ -66,7 +66,7 @@ void BpTree::insert(int n, string s){
     dynamicRoot = findRoot(root);
 
     
-    //Simple insertion into a leaf thats not full=========================
+    //Simple insertion into a leaf thats not full==========================================
     
     if ((dynamicRoot->isFull(dynamicRoot) == false) && (dynamicRoot->isLeaf == true)){
         
@@ -78,7 +78,7 @@ void BpTree::insert(int n, string s){
     }
     
     
-    //Insertion when the leaf node is full=================================
+    //Insertion when the leaf node is full=================================================
     else if ((dynamicRoot->isFull(dynamicRoot) == true) && (dynamicRoot->isLeaf == true)){
 
         splitNode(dynamicRoot);
@@ -108,36 +108,16 @@ void BpTree::insert(int n, string s){
         
         treeNode* leafNode = new treeNode(keys_per_node, NULL, true);
         leafNode = findLeaf(dynamicRoot, n);
-        leafNode->keys[leafNode->counter] =n;
+        
+        if (leafNode->parent->keys[leafNode->parent->counter-1] < n){
+            leafNode = leafNode->parent->pointers[leafNode->parent->counter];
+        }
+        
+        leafNode->keys[leafNode->counter] = n;
         leafNode->counter++;
         sort(leafNode->keys,leafNode->keys+leafNode->counter);
-        
-//        for (int i=0; i < dynamicRoot->counter; i++){
-//            if (n < dynamicRoot->keys[i]){
-//                if(dynamicRoot->pointers[i]->isFull(dynamicRoot->pointers[i]) == false && dynamicRoot->pointers[i]->isLeaf == true){
-//                    dynamicRoot->pointers[i]->keys[dynamicRoot->pointers[i]->counter] = n;
-//                    dynamicRoot->pointers[i]->counter++;
-//                    sort(dynamicRoot->pointers[i]->keys,dynamicRoot->pointers[i]->keys+dynamicRoot->pointers[i]->counter);
-//                }
-//                
-//                if (dynamicRoot->pointers[i]->isLeaf == false){
-//                    
-//                    treeNode* currentNode = new treeNode(keys_per_node, NULL, false);
-//                    currentNode = dynamicRoot->pointers[i];
-//                    
-//                }
-//            }
-//            
-//            if (n > dynamicRoot->keys[i]){
-//                
-//                if(dynamicRoot->pointers[i+1]->isFull(dynamicRoot->pointers[i+1]) == false && dynamicRoot->pointers[i+1]->isLeaf == true){
-//                    dynamicRoot->pointers[i+1]->keys[dynamicRoot->pointers[i+1]->counter] = n;
-//                    dynamicRoot->pointers[i+1]->counter++;
-//                    sort(dynamicRoot->pointers[i+1]->keys,dynamicRoot->pointers[i+1]->keys+dynamicRoot->pointers[i+1]->counter);
-//                }
-//
-//            }
-//        }
+        sort(dynamicRoot->keys,dynamicRoot->keys+dynamicRoot->counter);
+
     
     }
 
@@ -185,10 +165,13 @@ void BpTree::printKeys(){
         cout<<currentLevel->pointers[2]->keys[i]<<", ";
     }
     
+//    cout<<"   ";
+//    
+//    for (int i=0; i < currentLevel->pointers[3]->counter; i++){
+//        cout<<currentLevel->pointers[3]->keys[i]<<", ";
+//    }
 
 
-        
-    
 
 }
 
@@ -236,14 +219,41 @@ void BpTree::splitNode(treeNode *node){
         }
         
         //Linking up the pointers
-        node->pointers[keys_per_node] = newNode;
-        node->parent->pointers[node->parent->counter] = node;
-        node->parent->pointers[node->parent->counter+1]=newNode;
+//        int position=8;
+//        for (int i=0; node->parent->counter; i++){
+//            if (&node== &(node->parent->pointers[i])){
+//                position = i;
+//                cout<<"The position: "<<position<<endl;
+//            }
+//        }
+//        
+//        
+//        node->parent->pointers[position] = node;
+//        node->parent->pointers[position+1]=newNode;
+//        newNode->parent = node->parent;
+//        
+//        //update the values in parent node
+//        node->parent->keys[position+1] = newNode->keys[0];
+//        node->parent->counter++;
+        
+        
+//        node->parent->pointers[node->parent->counter] = node;
+//        node->parent->pointers[node->parent->counter+1]=newNode;
         newNode->parent = node->parent;
         
         //update the values in parent node
         node->parent->keys[node->parent->counter] = newNode->keys[0];
         node->parent->counter++;
+        
+        sort(node->parent->keys,node->parent->keys+node->parent->counter);
+        for (int i =0; i<node->parent->counter; i++){
+            if (node->parent->keys[i] == newNode->keys[0]){
+                node->parent->pointers[i] = node;
+                node->parent->pointers[i+1] = newNode;
+            
+            }
+        
+        }
         
 
     }
@@ -342,6 +352,7 @@ treeNode* BpTree::findLeaf(treeNode *node, int n){
             if (n < node->parent->keys[i]){
                 return node->parent->pointers[i];
             }
+            
             
             else if(n > node->parent->keys[i]){
                 return node->parent->pointers[i+1];
