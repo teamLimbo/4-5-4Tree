@@ -111,6 +111,7 @@ void BpTree::insert(int n, string s){
       //  cout<<"The dynamic root counter"<<dynamicRoot->counter<<endl;
         sort(dynamicRoot->keys,dynamicRoot->keys+dynamicRoot->counter);
 
+        
         if (leafNode->parent->keys[leafNode->parent->counter-1] < n){
             leafNode = leafNode->parent->pointers[leafNode->parent->counter];
         }
@@ -140,44 +141,43 @@ void BpTree::find(int n){
 void BpTree::printKeys(){
     
     treeNode* dynamicRoot = new treeNode(keys_per_node, NULL, true);
-    
     dynamicRoot = findRoot(root);
+    queue<pair<treeNode* , int>> printQueue;
+    pair<treeNode*, int> item (dynamicRoot, 0);
+    printQueue.push(item);
+    int currentLevel = 0;
     
-//    treeNode* currentLevel = new treeNode(keys_per_node, NULL, false);
-//    currentLevel = dynamicRoot;
+    while (printQueue.empty()==false){
+       
+        item = printQueue.front();
+        
+        if (currentLevel < item.second){
+            cout<<endl;
+            currentLevel++;
+        }
+        
+        printQueue.pop();
+        cout<<"[";
+        for (int i=0; i < item.first->counter; i++){
+            cout<<item.first->keys[i];
+            
+            if (i==item.first->counter-1){
+                //do nothing
+            }
+            else{
+                cout<<", ";
+            }
+        }
+        cout<<"]";
+        
+        if (item.first->isLeaf == false){
+            for (int i=0; i <= item.first->counter; i++){
+                pair<treeNode*, int> item2 (item.first->pointers[i], item.second+1);
+                printQueue.push(item2);
+            }
+        }
     
-    cout<<"[";
-    for (int i=0; i < dynamicRoot->counter; i++){
-        cout<<dynamicRoot->keys[i]<<", ";
     }
-    cout<<"]";
-    cout<<endl;
-    
-    
-    traversePrintKeys(dynamicRoot);
-
-    
-//    for (int i=0; i < currentLevel->pointers[0]->counter; i++){
-//        cout<<currentLevel->pointers[0]->keys[i]<<", ";
-//    }
-//    cout<<"   ";
-//    
-//    for (int i=0; i < currentLevel->pointers[1]->counter; i++){
-//        cout<<currentLevel->pointers[1]->keys[i]<<", ";
-//    }
-//    
-//    cout<<"   ";
-//    
-//    for (int i=0; i < currentLevel->pointers[2]->counter; i++){
-//        cout<<currentLevel->pointers[2]->keys[i]<<", ";
-//    }
-//    
-//    cout<<"   ";
-//    
-//    for (int i=0; i < currentLevel->pointers[3]->counter; i++){
-//        cout<<currentLevel->pointers[3]->keys[i]<<", ";
-//    }
-
 
 
 }
@@ -190,7 +190,6 @@ void BpTree::printValues(){
 }
 
 void BpTree::splitNode(treeNode *node){
-    
     
     treeNode* newNode = new treeNode(keys_per_node, NULL, true);
     
@@ -250,6 +249,7 @@ void BpTree::splitNode(treeNode *node){
         newNode->parent = node->parent;
         
         //update the values in parent node
+       
         node->parent->keys[node->parent->counter] = newNode->keys[0];
         node->parent->counter++;
         sort(node->parent->keys,node->parent->keys+node->parent->counter);
@@ -377,7 +377,7 @@ treeNode* BpTree::findLeaf(treeNode *node, int n){
         for (int i=0; i < node->counter; i++){
             if (n < node->keys[i]){
                 if(node->pointers[i]->isFull(node->pointers[i]) == false && node->pointers[i]->isLeaf == true){
-                  //  cout<<"Are we here"<<endl;
+                    //  cout<<"Are we here"<<endl;
                     return node->pointers[i];
                 }
                 
@@ -402,7 +402,7 @@ treeNode* BpTree::findLeaf(treeNode *node, int n){
             else if (n > node->keys[i]){
                 
                 if(node->pointers[i+1]->isFull(node->pointers[i+1]) == false && node->pointers[i+1]->isLeaf == true){
-                 //   cout<<" or Are we here"<<endl;
+                    //   cout<<" or Are we here"<<endl;
                     return node->pointers[i+1];
                 }
                 else if (node->pointers[i+1]->isFull(node->pointers[i+1]) == true && node->pointers[i+1]->isLeaf == true){
@@ -424,12 +424,12 @@ treeNode* BpTree::findLeaf(treeNode *node, int n){
             }
         }
     }
-
+    
     return node;
 }
 
 void BpTree::traversePrintKeys(treeNode* node){
-//    int currentLevel = 0;
+//    int currentLevel = 1;
     for (int i = 0; i <= node->counter; i++){
         if (node->isLeaf == false){
  //           currentLevel++;

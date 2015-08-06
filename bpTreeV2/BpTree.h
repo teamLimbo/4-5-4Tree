@@ -5,13 +5,16 @@
 //  Created by Archit Sood on 2015-07-30.
 //  Copyright (c) 2015 Archit Sood. All rights reserved.
 //
-
+#ifndef BPTREE_H
+#define BPTREE_H
 #include <stdio.h>
 #include <iostream>
 #include <string>
 #include <array>
 #include <map>
 #include <algorithm>
+#include <queue>
+
 using namespace std;
 
 //=========================================TREENODE========================================
@@ -76,3 +79,4 @@ public:
 
 	//TODO: put recursive helper functions
 };
+#endif
