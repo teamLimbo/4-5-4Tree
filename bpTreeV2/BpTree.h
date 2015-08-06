@@ -6,6 +6,19 @@
 //  Copyright (c) 2015 Archit Sood. All rights reserved.
 //
 
+/*
+==========================================READ-ME==========================================
+
+Instructions to compile:
+1. Go the desired folder where the current header and cpp files are stored
+2. Type : "g++ BpTree.cpp -std=c++11" to compile if the main is inserted in .cpp file
+3. Or Type: "g++ *.cpp -std=c++11" if a different main file is used.
+4. Run "./a.out" to execute.                                    
+
+===========================================================================================
+*/
+
+
 #ifndef BPTREE_H
 #define BPTREE_H
 

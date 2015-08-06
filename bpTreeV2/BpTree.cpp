@@ -6,6 +6,21 @@
 //  Copyright (c) 2015 Archit Sood. All rights reserved.
 //
 
+/*
+==========================================READ-ME==========================================
+
+Instructions to compile:
+1. Go the desired folder where the current header and cpp files are stored
+2. Type : "g++ BpTree.cpp -std=c++11" to compile if the main is inserted in this file
+3. Or Type: "g++ *.cpp -std=c++11" if a different main file is used.
+4. Run "./a.out" to execute.
+
+
+The current code partially supports insert function.
+There is a sample main function at the bottom of this file which shows 
+the current fucntionality. The corresponding console output is also shown.                                    
+*/
+
 #include "BpTree.h"
 
 
@@ -461,8 +476,8 @@ treeNode* BpTree::findLeaf(treeNode *node, int n){
 }
 
 
-
-//Sample Test function used
+/*
+Sample Test function used
 
 int main(){
     
@@ -498,24 +513,24 @@ int main(){
 }
  
 
-//Console Output:
-//
-// Please enter the number of keys you want per node:
-// 3
-// 
-// [5, 7, 27]
-// [1, 4][5, 6][7, 21][27, 28, 50]1 => Rachel
-// 4 => Joey
-// 5 => Monica
-// 6 => Hulk
-// 7 => Ross
-// 21 => Chandler
-// 27 => Phoebe
-// 28 => Captain America
-// 50 => Iron-Man
-// 
-// Captain America
-// This key does not exist
+Console Output:
 
+Please enter the number of keys you want per node:
+3
+
+[5, 7, 27]
+[1, 4][5, 6][7, 21][27, 28, 50]1 => Rachel
+4 => Joey
+5 => Monica
+6 => Hulk
+7 => Ross
+21 => Chandler
+27 => Phoebe
+28 => Captain America
+50 => Iron-Man
+
+Captain America
+This key does not exist
+*/
 
 
