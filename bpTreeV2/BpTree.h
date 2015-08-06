@@ -2,11 +2,13 @@
 //  BpTree.h
 //  bpTreeV2
 //
-//  Created by Archit Sood on 2015-07-30.
+//  Created by Archit Sood (301188293) and Daniel Soheili (301163609) on 2015-07-30.
 //  Copyright (c) 2015 Archit Sood. All rights reserved.
 //
+
 #ifndef BPTREE_H
 #define BPTREE_H
+
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -22,15 +24,14 @@ class treeNode{
     
 public:
     
-    treeNode(int numKeys_, treeNode* parent_, bool isLeaf_);
-    void makeLeaf(treeNode* treeNode_);
-    bool isFull(treeNode* treeNode_);
-    
+    treeNode(int numKeys_, treeNode* parent_, bool isLeaf_);    //constructor
+    void makeLeaf(treeNode* treeNode_);                         //makes node object leaf
+    bool isFull(treeNode* treeNode_);                           //Checks if the node is full
+    ~treeNode();                                                //destructor
     
     int numKeys;            // Size of the node i.e number of possible keys
     treeNode** pointers;	// Poniter to the array of pointer
     int* keys;              // Points to the array of keys
-//  string* value;          // Points the value associated with the key
     treeNode* parent;		// Pointer to the parent node (null if root)
     bool isLeaf;            // Checks if the current node is a leaf
     int counter;            // Keeps count of number of keys inserted in the node
@@ -46,8 +47,9 @@ public:
     
     dataBase(int n);
     void dataBaseInsert(int key_, string value_, dataBase* record);
+    ~dataBase();
     
-    map <int, string> recordDatabase;
+    map <int, string> recordDatabase;  //Keeps track of key-value pairs
     
 };
 
@@ -64,19 +66,18 @@ public:
 	void find(int n);
 	void printKeys();
 	void printValues();
+    ~BpTree();
     
     //Helper fuctions
-    void splitNode(treeNode* node);
-    treeNode* findRoot(treeNode* node);
-    treeNode* findLeaf(treeNode* node, int n);
-    void traversePrintKeys(treeNode* node);
+    void splitNode(treeNode* node);                 //Splits the given node
+    treeNode* findRoot(treeNode* node);             //Finds the root of the tree
+    treeNode* findLeaf(treeNode* node, int n);      //Finds the desirable leaf node to insert key
     
     //Class variables
-	treeNode* root;
-    dataBase* records;
-	int keys_per_node;
+	treeNode* root;     //Node type
+    dataBase* records;  //dataBase type, Keeps track of key-value pairs
+	int keys_per_node;  //Maximum number of keys per node
 
 
-	//TODO: put recursive helper functions
 };
 #endif
